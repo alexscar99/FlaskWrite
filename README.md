@@ -1,2 +1,2 @@
 # Flask_CRUD_App
-Python Application Using the Flask Framework
+-    Python CRUD web application that was built using the lightweight framework Flask
