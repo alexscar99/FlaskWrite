@@ -1,0 +1,21 @@
+<header class="app-header py-3">
+    <div class="row flex-nowrap justify-content-between align-items-center">
+        <div class="col-2 pt-1">
+            <a class="text-muted nav-link font-weight-bold" href="/articles">New Articles</a>
+        </div>
+
+        <div class="col-6 text-center">
+            <a class="app-header-logo text-dark" href="/">FlaskWrite</a>
+        </div>
+
+        <div class="col-2 d-flex justify-content-end align-items-center">
+            {% if session.logged_in %}
+                <a class="btn btn-md btn-outline-dark" href="/dashboard">Dashboard</a>
+                <a class="nav-link font-weight-bold ml-4" href="/logout">Logout</a>
+            {% else %}
+                <a class="nav-link font-weight-bold mr-4" href="/login">Login</a>
+                <a class="btn btn-md btn-outline-dark" href="/register">Get Started</a>
+            {% endif %}
+        </div>
+    </div>
+</header>

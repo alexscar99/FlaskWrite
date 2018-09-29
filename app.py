@@ -1,6 +1,7 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
 from flask_mysqldb import MySQL
 from passlib.hash import sha256_crypt
+from functools import wraps
 from helpers import data, keys, registration
 
 
@@ -27,7 +28,7 @@ def about_us():
     return render_template('about.html')
 
 @app.route('/articles')
-def articles():
+def all_articles():
     return render_template('articles.html', articles=data.Articles())
 
 @app.route('/article/<string:id>/')
@@ -59,7 +60,7 @@ def register_user():
 
         # Show flash message and redirect to login
         flash('You are now registered and can log in!', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('login_user'))
 
     return render_template('register.html', form=form)
 
@@ -88,7 +89,7 @@ def login_user():
                 session['username'] = username
 
                 flash('You are now logged in', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('render_dashboard'))
 
             else:
                 error = 'Invalid password. Please try again'
@@ -101,6 +102,32 @@ def login_user():
             return render_template('login.html', error=error)
 
     return render_template('login.html')
+
+
+# Decorator to check if user is logged in or not to stop access to
+# dashboard route if not signed in
+def is_logged_in(fn):
+    @wraps(fn)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return fn(*args, **kwargs)
+        else:
+            flash('Permission Denied. Please login to access this page', 'danger')
+            return redirect(url_for('login_user'))
+    return wrap
+
+# Logout user, show flash message, redirect to login page
+@app.route('/logout')
+def logout_user():
+    session.clear()
+    flash('You are now logged out', 'success')
+    return redirect(url_for('login_user'))
+
+# Dashboard
+@app.route('/dashboard')
+@is_logged_in
+def render_dashboard():
+    return render_template('dashboard.html')
 
 
 if __name__ == '__main__':
