@@ -83,9 +83,22 @@ def login_user():
 
             # See if the password entered by user matches the one in DB
             if sha256_crypt.verify(password_candidate, password):
-                app.logger.info('PASSWORD MATCHED')
+                # Create session vars
+                session['logged_in'] = True
+                session['username'] = username
+
+                flash('You are now logged in', 'success')
+                return redirect(url_for('dashboard'))
+
+            else:
+                error = 'Invalid password. Please try again'
+                return render_template('login.html', error=error)
+
+            #Close connection
+            cursor.close()
         else:
-            app.logger.info('NO USER')
+            error = 'Username not found. Please try again.'
+            return render_template('login.html', error=error)
 
     return render_template('login.html')
 
