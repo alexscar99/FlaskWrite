@@ -90,7 +90,6 @@ def login_user():
 
                 flash('You are now logged in', 'success')
                 return redirect(url_for('render_dashboard'))
-
             else:
                 error = 'Invalid password. Please try again'
                 return render_template('login.html', error=error)
