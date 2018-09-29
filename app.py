@@ -57,11 +57,37 @@ def register_user():
         db.connection.commit()
         cursor.close()
 
-        # Show flash message and redirect to index (will change to login) on submission
+        # Show flash message and redirect to login
         flash('You are now registered and can log in!', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+# User Login
+@app.route('/login', methods=['GET', 'POST'])
+def login_user():
+    if request.method == 'POST':
+        # Get Form Fields
+        username = request.form['username']
+        password_candidate = request.form['password']
+
+        # Create cursor and get username if it exists
+        cursor = db.connection.cursor()
+        result = cursor.execute('SELECT * FROM users WHERE username =%s', [username])
+
+        if (result > 0):
+            # If there is a match, get stored hash
+            data = cursor.fetchone()
+            # DictCursor configured above, treat like dict not tuple
+            password = data['password']
+
+            # See if the password entered by user matches the one in DB
+            if sha256_crypt.verify(password_candidate, password):
+                app.logger.info('PASSWORD MATCHED')
+        else:
+            app.logger.info('NO USER')
+
+    return render_template('login.html')
 
 
 if __name__ == '__main__':
