@@ -1,7 +1,170 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>Dashboard</h1>
-    <hr>
-    <h3>Welcome {{ session.username }}</h3>
+<div class="container bootstrap snippet">
+    <div class="row">
+        <div class="col-sm-10">
+            <h1>@{{ session.username }}</h1>
+            <h4>{{ session.real_name }}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <!--left col-->
+            <div class="text-center">
+                <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar">
+                <h6>Upload a different photo...</h6>
+                <input type="file" class="text-center center-block file-upload">
+            </div>
+            </hr><br>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Website <i class="fa fa-link fa-1x"></i></div>
+                <div class="panel-body"><a href={{ session.website }}>{{ session.website }}</a>
+                </div>
+            </div>
+            <br>
+            <ul class="list-group">
+                <li class="list-group-item text-muted">Account Activity <i class="fa fa-dashboard fa-1x"></i></li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong>Posts</strong></span> 0</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong>Likes</strong></span> {{
+                    session.likes }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong>Followers</strong></span>
+                    0</li>
+            </ul>
+
+            <ul class="list-group">
+                <br>
+                <li class="list-group-item text-muted">Social Links <i class="fa fa-dashboard fa-1x"></i></li>
+                <li class="list-group-item text-left">
+                    <span class="pull-left">
+                        <strong>Facebook</strong>
+                        <a href="www.twitter.com/example/handle">
+                            wwww.facebook.com/profile
+                        </a>
+                    </span>
+                </li>
+                <li class="list-group-item text-left">
+                    <span class="pull-left">
+                        <strong>Twitter</strong>
+                        <a href="www.twitter.com/example/handle">
+                            www.twitter.com/handle
+                        </a>
+                    </span>
+                </li>
+                <li class="list-group-item text-left">
+                    <span class="pull-left">
+                        <strong>Email</strong>
+                    </span>
+                    <br>
+                    <span>{{ session.email }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!--/col-3-->
+        <div class="col-sm-9">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+                        aria-selected="true">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="profile"
+                        aria-selected="false">Messages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="contact"
+                        aria-selected="false">Settings</a>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <!-- Home  -->
+                <div class="tab-pane show active" id="home">
+                    <br>
+                    <br>
+                    <h2>Hello {{ (session.real_name).split()[0] }}</h2>
+                    <h5>See what's new for you</h5>
+                    <br><br><br>
+                    <h1 class="text-center">DASHBOARD CONTENT HERE</h1>
+                </div>
+
+                <!-- Messages -->
+                <div class="tab-pane" id="messages">
+                    <br>
+                    <h2>Messages</h2>
+                </div>
+
+                <!-- Update Settings Form -->
+                <div class="tab-pane" id="settings">
+                    <br>
+                    <h2></h2>
+                    <form class="form" action="##" method="post" id="registrationForm">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <label for="first_name">
+                                    <h4>Name</h4>
+                                </label>
+                                <input type="text" class="form-control" name="first_name" id="first_name" placeholder="full name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-xs-6">
+                                <label for="email">
+                                    <h4>Email</h4>
+                                </label>
+                                <input type="email" class="form-control" name="email" id="email" placeholder="you@email.com"
+                                    title="enter your email.">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="email">
+                                    <h4>Website</h4>
+                                </label>
+                                <input type="email" class="form-control" id="website" placeholder="www.example.com"
+                                    title="enter a location">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="password">
+                                    <h4>Password</h4>
+                                </label>
+                                <input type="password" class="form-control" name="password" id="password" placeholder="password"
+                                    title="enter your password.">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <div class="col-xs-6">
+                                <label for="password2">
+                                    <h4>Verify</h4>
+                                </label>
+                                <input type="password" class="form-control" name="password2" id="password2" placeholder="password2"
+                                    title="enter your password2.">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <br>
+                                <button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i>
+                                    Save</button>
+                                <button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i>
+                                    Reset</button>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

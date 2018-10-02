@@ -1,5 +1,6 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
 from flask_mysqldb import MySQL
+from time import strftime
 from passlib.hash import sha256_crypt
 from functools import wraps
 from helpers import data, keys, registration
@@ -23,13 +24,16 @@ db = MySQL(app)
 def index():
     return render_template('home.html')
 
+
 @app.route('/about')
 def about_us():
     return render_template('about.html')
 
+
 @app.route('/articles')
 def all_articles():
     return render_template('articles.html', articles=data.Articles())
+
 
 @app.route('/article/<string:id>/')
 def show_article(id):
@@ -48,13 +52,15 @@ def register_user():
         email = form.email.data
         username = form.username.data
         password = sha256_crypt.encrypt(str(form.password.data))
+        website = form.website.data
+        date_created = strftime('%Y-%m-%d')
 
         # Create cursor
         cursor = db.connection.cursor()
 
         # Execute SQL query, commit to DB, then close connection
-        cursor.execute('INSERT INTO users(name, email, username, password) \
-        VALUES(%s, %s, %s, %s)', (name, email, username, password))
+        cursor.execute('INSERT INTO users(real_name, email, username, password, website, date_created) \
+        VALUES(%s, %s, %s, %s, %s, %s)', (name, email, username, password, website, date_created))
         db.connection.commit()
         cursor.close()
 
@@ -63,6 +69,7 @@ def register_user():
         return redirect(url_for('login_user'))
 
     return render_template('register.html', form=form)
+
 
 # User Login
 @app.route('/login', methods=['GET', 'POST'])
@@ -74,19 +81,30 @@ def login_user():
 
         # Create cursor and get username if it exists
         cursor = db.connection.cursor()
-        result = cursor.execute('SELECT * FROM users WHERE username =%s', [username])
+        result = cursor.execute(
+            'SELECT * FROM users WHERE username =%s', [username])
 
         if (result > 0):
             # If there is a match, get stored hash
             data = cursor.fetchone()
             # DictCursor configured above, treat like dict not tuple
             password = data['password']
+            name = data['real_name']
+            email = data['email']
+            website = data['website']
+            likes = data['total_likes']
+            profile_picture = data['profile_picture_url']
 
             # See if the password entered by user matches the one in DB
             if sha256_crypt.verify(password_candidate, password):
                 # Create session vars
                 session['logged_in'] = True
+                session['real_name'] = name
                 session['username'] = username
+                session['website'] = website
+                session['email'] = email
+                session['likes'] = likes
+                session['profile_picture'] = profile_picture
 
                 flash('You are now logged in', 'success')
                 return redirect(url_for('render_dashboard'))
@@ -94,7 +112,7 @@ def login_user():
                 error = 'Invalid password. Please try again'
                 return render_template('login.html', error=error)
 
-            #Close connection
+            # Close connection
             cursor.close()
         else:
             error = 'Username not found. Please try again.'
@@ -103,7 +121,7 @@ def login_user():
     return render_template('login.html')
 
 
-# Decorator to check if user is logged in or not to stop access to
+# Decorator to check if user is logged in or not to deny access to
 # dashboard route if not signed in
 def is_logged_in(fn):
     @wraps(fn)
@@ -116,6 +134,8 @@ def is_logged_in(fn):
     return wrap
 
 # Logout user, show flash message, redirect to login page
+
+
 @app.route('/logout')
 def logout_user():
     session.clear()
@@ -123,6 +143,8 @@ def logout_user():
     return redirect(url_for('login_user'))
 
 # Dashboard
+
+
 @app.route('/dashboard')
 @is_logged_in
 def render_dashboard():
